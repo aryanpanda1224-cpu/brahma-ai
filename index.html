@@ -107,6 +107,7 @@
 
 <div class="chat-box">
   <input id="userInput" type="text" placeholder="Ask BRAHMA anything...">
+  <button onclick="startListening()">🎤</button>
   <button onclick="talkToBrahma()">Send</button>
 </div>
 
@@ -173,7 +174,38 @@ function speak(text) {
     window.speechSynthesis.speak(speech);
   }
   }
-  
+  function startListening() {
+  if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
+    response.textContent = "BRAHMA: Voice input is not supported in this browser.";
+    speak("Voice input is not supported in this browser.");
+    return;
+  }
+
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  const recognition = new SpeechRecognition();
+
+  recognition.lang = "en-IN";
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  response.textContent = "BRAHMA: Listening...";
+
+  recognition.start();
+
+  recognition.onresult = function(event) {
+    const spokenText = event.results[0][0].transcript;
+
+    document.getElementById("userInput").value = spokenText;
+
+    talkToBrahma();
+  };
+
+  recognition.onerror = function() {
+    response.textContent = "BRAHMA: I couldn't hear you. Please try again.";
+  };
+  }
 </script>
     
     <div class="status">
