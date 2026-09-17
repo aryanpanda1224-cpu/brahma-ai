@@ -170,6 +170,17 @@ else if (
   const now = new Date();
   reply = "Today's date is " + now.toLocaleDateString();
   }
+  // Calculator
+else if (lowerMessage.startsWith("calculate ")) {
+  const expression = message.substring(10).trim();
+
+  try {
+    const answer = Function('"use strict"; return (' + expression + ')')();
+    reply = "The answer is " + answer + ".";
+  } catch {
+    reply = "Sorry, I couldn't calculate that.";
+  }
+  }
   // Existing responses
   else if (
     lowerMessage.includes("hello") ||
