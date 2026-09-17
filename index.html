@@ -121,6 +121,38 @@
 
     if (message === "") {
       response.textContent = "BRAHMA: Please type something.";
+      speak("Please type something.");
+      return;
+    }
+
+    const reply = "I received your message — " + message;
+
+    response.textContent = "BRAHMA: " + reply;
+
+    speak(reply);
+
+    input.value = "";
+  }
+
+  function speak(text) {
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+
+      const voice = new SpeechSynthesisUtterance(text);
+      voice.rate = 1;
+      voice.pitch = 1;
+
+      window.speechSynthesis.speak(voice);
+    }
+  }
+</script>
+    const input = document.getElementById("userInput");
+    const response = document.getElementById("response");
+
+    const message = input.value.trim();
+
+    if (message === "") {
+      response.textContent = "BRAHMA: Please type something.";
       return;
     }
 
