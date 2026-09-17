@@ -105,10 +105,29 @@
       YOUR PERSONAL AI ASSISTANT
     </div>
 
-    <div class="chat-box">
-      <input type="text" placeholder="Ask BRAHMA anything...">
-      <button>Send</button>
-    </div>
+<div class="chat-box">
+  <input id="userInput" type="text" placeholder="Ask BRAHMA anything...">
+  <button onclick="talkToBrahma()">Send</button>
+</div>
+
+<div id="response" style="margin-top: 20px; color: #00eaff;"></div>
+
+<script>
+  function talkToBrahma() {
+    const input = document.getElementById("userInput");
+    const response = document.getElementById("response");
+
+    const message = input.value.trim();
+
+    if (message === "") {
+      response.textContent = "BRAHMA: Please type something.";
+      return;
+    }
+
+    response.textContent = "BRAHMA: I received your message — " + message;
+    input.value = "";
+  }
+</script>
 
     <div class="status">
       SYSTEM ONLINE
