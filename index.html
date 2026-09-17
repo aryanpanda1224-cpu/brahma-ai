@@ -133,18 +133,35 @@
 
     input.value = "";
   }
+function speak(text) {
+  if ("speechSynthesis" in window) {
+    window.speechSynthesis.cancel();
 
-  function speak(text) {
-    if ("speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
+    const voices = window.speechSynthesis.getVoices();
 
-      const voice = new SpeechSynthesisUtterance(text);
-      voice.rate = 1;
-      voice.pitch = 1;
+    let voice = voices.find(v =>
+      v.lang.startsWith("en") &&
+      /male|david|mark|daniel|alex/i.test(v.name)
+    );
 
-      window.speechSynthesis.speak(voice);
+    if (!voice) {
+      voice = voices.find(v => v.lang.startsWith("en"));
     }
+
+    const speech = new SpeechSynthesisUtterance(text);
+
+    if (voice) {
+      speech.voice = voice;
+    }
+
+    speech.rate = 0.9;
+    speech.pitch = 0.65;
+    speech.volume = 1;
+
+    window.speechSynthesis.speak(speech);
   }
+  }
+  
 </script>
     
     <div class="status">
