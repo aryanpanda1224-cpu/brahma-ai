@@ -206,6 +206,17 @@ function speak(text) {
     response.textContent = "BRAHMA: I couldn't hear you. Please try again.";
   };
   }
+  // BRAHMA Local Memory
+let brahmaMemory = JSON.parse(localStorage.getItem("brahmaMemory")) || {};
+
+function saveMemory(key, value) {
+  brahmaMemory[key] = value;
+  localStorage.setItem("brahmaMemory", JSON.stringify(brahmaMemory));
+}
+
+function getMemory(key) {
+  return brahmaMemory[key];
+      }                                                
 </script>
     
     <div class="status">
