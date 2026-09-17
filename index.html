@@ -180,7 +180,7 @@
 
 
   // Main BRAHMA Function
-  function talkToBrahma() {
+  async function talkToBrahma() {
 
     const input =
       document.getElementById("userInput");
@@ -427,14 +427,43 @@
     }
 
 
-    // Default
-    else {
+    // Send unknown messages to local backend
+else {
 
-      reply =
-        "I understand your message. I am still learning.";
+  response.textContent =
+    "BRAHMA: Connecting to backend...";
 
-    }
+  try {
 
+    const backendResponse =
+      await fetch(
+        "http://127.0.0.1:3000/chat",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify({
+            message: message
+          })
+        }
+      );
+
+    const data =
+      await backendResponse.json();
+
+    reply =
+      data.reply ||
+      "The backend did not send a reply.";
+
+  } catch (error) {
+
+    reply =
+      "I couldn't connect to the BRAHMA backend. Make sure Termux is running.";
+  }
+  }
 
     response.textContent =
       "BRAHMA: " + reply;
