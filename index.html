@@ -273,6 +273,12 @@ function speak(text) {
 
     const voices = window.speechSynthesis.getVoices();
 
+if (voices.length === 0) {
+  window.speechSynthesis.onvoiceschanged = function() {
+    speak(text);
+  };
+  return;
+}
     let voice = voices.find(v =>
       v.lang.startsWith("en") &&
       /male|david|mark|daniel|alex/i.test(v.name)
