@@ -105,248 +105,412 @@
       YOUR PERSONAL AI ASSISTANT
     </div>
 
-<div class="chat-box">
-  <input id="userInput" type="text" placeholder="Ask BRAHMA anything...">
-  <button onclick="startListening()">🎤</button>
-  <button onclick="talkToBrahma()">Send</button>
-</div>
+    <div class="chat-box">
+      <input id="userInput" type="text" placeholder="Ask BRAHMA anything...">
+      <button onclick="startListening()">🎤</button>
+      <button onclick="talkToBrahma()">Send</button>
+    </div>
 
-<div id="response" style="margin-top: 20px; color: #00eaff;"></div>
+    <div id="response" style="margin-top: 20px; color: #00eaff;"></div>
 
-<script>
-  function talkToBrahma() {
-  const input = document.getElementById("userInput");
-  const response = document.getElementById("response");
-
-  const message = input.value.trim();
-
-  if (message === "") {
-    response.textContent = "BRAHMA: Please type something.";
-    speak("Please type something.");
-    return;
-  }
-
-  const lowerMessage = message.toLowerCase();
-  let reply;
-
-  // Remember name
-  if (lowerMessage.includes("my name is ")) {
-    const name = message.substring(lowerMessage.indexOf("my name is ") + 11).trim();
-
-    saveMemory("name", name);
-
-    reply = "Got it. I will remember your name is " + name + ".";
-  }
-
-  // Recall name
-  else if (
-    lowerMessage.includes("what is my name") ||
-    lowerMessage.includes("do you know my name")
-  ) {
-    const name = getMemory("name");
-
-    if (name) {
-      reply = "Your name is " + name + ".";
-    } else {
-      reply = "You haven't told me your name yet.";
-    }
-  }
-    // Conversation Recall
-else if (
-  lowerMessage.includes("what did i ask") ||
-  lowerMessage.includes("what did i say earlier") ||
-  lowerMessage.includes("show my conversation")
-) {
-  if (conversationHistory.length === 0) {
-    reply = "I don't have any conversation history yet.";
-  } else {
-    const recent = conversationHistory
-      .slice(-5)
-      .map(item => "You said: " + item.user)
-      .join(" | ");
-
-    reply = "Recently, " + recent;
-  }
-  }
-    // General Memory
-else if (lowerMessage.startsWith("remember that ")) {
-  const memory = message.substring(14).trim();
-
-  const memories = getMemory("facts") || [];
-  memories.push(memory);
-
-  saveMemory("facts", memories);
-
-  reply = "Got it. I will remember that.";
-}
-
-else if (
-  lowerMessage.includes("what do you remember") ||
-  lowerMessage.includes("what have you remembered")
-) {
-  const memories = getMemory("facts") || [];
-
-  if (memories.length === 0) {
-    reply = "I don't have any memories yet.";
-  } else {
-    reply = "I remember: " + memories.join(", ") + ".";
-  }
-      }
-// Clock
-else if (
-  lowerMessage.includes("what time is it") ||
-  lowerMessage.includes("current time") ||
-  lowerMessage.includes("time")
-) {
-  const now = new Date();
-  reply = "The current time is " + now.toLocaleTimeString();
-}
-
-// Date
-else if (
-  lowerMessage.includes("what is today's date") ||
-  lowerMessage.includes("what is the date") ||
-  lowerMessage.includes("today's date")
-) {
-  const now = new Date();
-  reply = "Today's date is " + now.toLocaleDateString();
-  }
-// Calculator
-else if (
-  lowerMessage.startsWith("calculate ") ||
-  lowerMessage.startsWith("what is ") ||
-  lowerMessage.startsWith("multiply ") ||
-  lowerMessage.startsWith("divide ") ||
-  lowerMessage.startsWith("add ") ||
-  lowerMessage.startsWith("subtract ")
-) {
-  let expression = message
-    .replace(/^calculate /i, "")
-    .replace(/^what is /i, "")
-    .replace(/^multiply /i, "")
-    .replace(/^divide /i, "")
-    .replace(/^add /i, "")
-    .replace(/^subtract /i, "")
-    .replace(/ times /gi, " * ")
-    .replace(/ multiplied by /gi, " * ")
-    .replace(/ divided by /gi, " / ")
-    .replace(/ plus /gi, " + ")
-    .replace(/ minus /gi, " - ")
-    .trim();
-
-  try {
-    const answer = Function('"use strict"; return (' + expression + ')')();
-    reply = "The answer is " + answer + ".";
-  } catch {
-    reply = "Sorry, I couldn't calculate that.";
-  }
-    }
-  // Existing responses
-  else if (
-    lowerMessage.includes("hello") ||
-    lowerMessage.includes("hi")
-  ) {
-    reply = "Hello! I am BRAHMA. How can I help you?";
-  }
-
-  else if (lowerMessage.includes("how are you")) {
-    reply = "I am doing great and I am ready to help you.";
-  }
-
-  else if (lowerMessage.includes("who are you")) {
-    reply = "I am BRAHMA, your personal AI assistant.";
-  }
-
-  else {
-    reply = "I understand your message. I am still learning.";
-  }
-
-  response.textContent = "BRAHMA: " + reply;
-    saveConversation(message, reply);
-  speak(reply);
-
-  input.value = "";
-  }
-function speak(text) {
-  };function speak(text) {
-  const speech = new SpeechSynthesisUtterance(text);
-  speech.lang = "en-IN";
-  speech.rate = 0.9;
-  speech.pitch = 0.8;
-  speech.volume = 1;
-
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(speech);
-}
-  function startListening() {
-  if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
-    response.textContent = "BRAHMA: Voice input is not supported in this browser.";
-    speak("Voice input is not supported in this browser.");
-    return;
-  }
-
-  const SpeechRecognition =
-    window.SpeechRecognition || window.webkitSpeechRecognition;
-
-  const recognition = new SpeechRecognition();
-
-  recognition.lang = "en-IN";
-  recognition.continuous = false;
-  recognition.interimResults = false;
-
-  response.textContent = "BRAHMA: Listening...";
-
-  recognition.start();
-
-  recognition.onresult = function(event) {
-    const spokenText = event.results[0][0].transcript;
-
-    document.getElementById("userInput").value = spokenText;
-
-    talkToBrahma();
-
-
-  recognition.onerror = function() {
-    response.textContent = "BRAHMA: I couldn't hear you. Please try again.";
-  };
-  }
-  // Conversation History
-let conversationHistory =
-  JSON.parse(localStorage.getItem("conversationHistory")) || [];
-
-function saveConversation(userMessage, brahmaReply) {
-  conversationHistory.push({
-    user: userMessage,
-    brahma: brahmaReply
-  });
-
-  if (conversationHistory.length > 20) {
-    conversationHistory.shift();
-  }
-
-  localStorage.setItem(
-    "conversationHistory",
-    JSON.stringify(conversationHistory)
-  );
-      }
-  // BRAHMA Local Memory
-let brahmaMemory = JSON.parse(localStorage.getItem("brahmaMemory")) || {};
-
-function saveMemory(key, value) {
-  brahmaMemory[key] = value;
-  localStorage.setItem("brahmaMemory", JSON.stringify(brahmaMemory));
-}
-
-function getMemory(key) {
-  return brahmaMemory[key];
-      }                                                
-</script>
-    
     <div class="status">
       SYSTEM ONLINE
     </div>
 
   </div>
 
+<script>
+
+  // Conversation History
+  let conversationHistory =
+    JSON.parse(localStorage.getItem("conversationHistory")) || [];
+
+  function saveConversation(userMessage, brahmaReply) {
+    conversationHistory.push({
+      user: userMessage,
+      brahma: brahmaReply
+    });
+
+    if (conversationHistory.length > 20) {
+      conversationHistory.shift();
+    }
+
+    localStorage.setItem(
+      "conversationHistory",
+      JSON.stringify(conversationHistory)
+    );
+  }
+
+
+  // BRAHMA Local Memory
+  let brahmaMemory =
+    JSON.parse(localStorage.getItem("brahmaMemory")) || {};
+
+  function saveMemory(key, value) {
+    brahmaMemory[key] = value;
+    localStorage.setItem(
+      "brahmaMemory",
+      JSON.stringify(brahmaMemory)
+    );
+  }
+
+  function getMemory(key) {
+    return brahmaMemory[key];
+  }
+
+
+  // Speech Output
+  function speak(text) {
+    if (!("speechSynthesis" in window)) {
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+
+    const speech =
+      new SpeechSynthesisUtterance(text);
+
+    speech.lang = "en-IN";
+    speech.rate = 0.9;
+    speech.pitch = 0.8;
+    speech.volume = 1;
+
+    window.speechSynthesis.speak(speech);
+  }
+
+
+  // Main BRAHMA Function
+  function talkToBrahma() {
+
+    const input =
+      document.getElementById("userInput");
+
+    const response =
+      document.getElementById("response");
+
+    const message =
+      input.value.trim();
+
+    if (message === "") {
+      response.textContent =
+        "BRAHMA: Please type something.";
+
+      speak("Please type something.");
+      return;
+    }
+
+    const lowerMessage =
+      message.toLowerCase();
+
+    let reply;
+
+
+    // Remember Name
+    if (lowerMessage.includes("my name is ")) {
+
+      const name =
+        message.substring(
+          lowerMessage.indexOf("my name is ") + 11
+        ).trim();
+
+      saveMemory("name", name);
+
+      reply =
+        "Got it. I will remember your name is " +
+        name + ".";
+
+    }
+
+
+    // Recall Name
+    else if (
+      lowerMessage.includes("what is my name") ||
+      lowerMessage.includes("do you know my name")
+    ) {
+
+      const name =
+        getMemory("name");
+
+      if (name) {
+        reply =
+          "Your name is " + name + ".";
+      } else {
+        reply =
+          "You haven't told me your name yet.";
+      }
+
+    }
+
+
+    // Conversation Recall
+    else if (
+      lowerMessage.includes("what did i ask") ||
+      lowerMessage.includes("what did i say earlier") ||
+      lowerMessage.includes("show my conversation")
+    ) {
+
+      if (conversationHistory.length === 0) {
+
+        reply =
+          "I don't have any conversation history yet.";
+
+      } else {
+
+        const recent =
+          conversationHistory
+            .slice(-5)
+            .map(item => "You said: " + item.user)
+            .join(" | ");
+
+        reply =
+          "Recently, " + recent;
+      }
+
+    }
+
+
+    // General Memory
+    else if (
+      lowerMessage.startsWith("remember that ")
+    ) {
+
+      const memory =
+        message.substring(14).trim();
+
+      const memories =
+        getMemory("facts") || [];
+
+      memories.push(memory);
+
+      saveMemory("facts", memories);
+
+      reply =
+        "Got it. I will remember that.";
+
+    }
+
+
+    // Recall General Memory
+    else if (
+      lowerMessage.includes("what do you remember") ||
+      lowerMessage.includes("what have you remembered")
+    ) {
+
+      const memories =
+        getMemory("facts") || [];
+
+      if (memories.length === 0) {
+
+        reply =
+          "I don't have any memories yet.";
+
+      } else {
+
+        reply =
+          "I remember: " +
+          memories.join(", ") + ".";
+      }
+
+    }
+
+
+    // Clock
+    else if (
+      lowerMessage.includes("what time is it") ||
+      lowerMessage.includes("current time") ||
+      lowerMessage.includes("time")
+    ) {
+
+      const now = new Date();
+
+      reply =
+        "The current time is " +
+        now.toLocaleTimeString();
+
+    }
+
+
+    // Date
+    else if (
+      lowerMessage.includes("what is today's date") ||
+      lowerMessage.includes("what is the date") ||
+      lowerMessage.includes("today's date")
+    ) {
+
+      const now = new Date();
+
+      reply =
+        "Today's date is " +
+        now.toLocaleDateString();
+
+    }
+
+
+    // Calculator
+    else if (
+      lowerMessage.startsWith("calculate ") ||
+      lowerMessage.startsWith("what is ") ||
+      lowerMessage.startsWith("multiply ") ||
+      lowerMessage.startsWith("divide ") ||
+      lowerMessage.startsWith("add ") ||
+      lowerMessage.startsWith("subtract ")
+    ) {
+
+      let expression =
+        message
+          .replace(/^calculate /i, "")
+          .replace(/^what is /i, "")
+          .replace(/^multiply /i, "")
+          .replace(/^divide /i, "")
+          .replace(/^add /i, "")
+          .replace(/^subtract /i, "")
+          .replace(/ times /gi, " * ")
+          .replace(/ multiplied by /gi, " * ")
+          .replace(/ divided by /gi, " / ")
+          .replace(/ plus /gi, " + ")
+          .replace(/ minus /gi, " - ")
+          .trim();
+
+      try {
+
+        const answer =
+          Function(
+            '"use strict"; return (' +
+            expression +
+            ')'
+          )();
+
+        reply =
+          "The answer is " +
+          answer + ".";
+
+      } catch {
+
+        reply =
+          "Sorry, I couldn't calculate that.";
+      }
+
+    }
+
+
+    // Hello
+    else if (
+      lowerMessage.includes("hello") ||
+      lowerMessage.includes("hi")
+    ) {
+
+      reply =
+        "Hello! I am BRAHMA. How can I help you?";
+
+    }
+
+
+    // How Are You
+    else if (
+      lowerMessage.includes("how are you")
+    ) {
+
+      reply =
+        "I am doing great and I am ready to help you.";
+
+    }
+
+
+    // Who Are You
+    else if (
+      lowerMessage.includes("who are you")
+    ) {
+
+      reply =
+        "I am BRAHMA, your personal AI assistant.";
+
+    }
+
+
+    // Default
+    else {
+
+      reply =
+        "I understand your message. I am still learning.";
+
+    }
+
+
+    response.textContent =
+      "BRAHMA: " + reply;
+
+    saveConversation(
+      message,
+      reply
+    );
+
+    speak(reply);
+
+    input.value = "";
+  }
+
+
+  // Voice Input
+  function startListening() {
+
+    const response =
+      document.getElementById("response");
+
+    if (
+      !("webkitSpeechRecognition" in window) &&
+      !("SpeechRecognition" in window)
+    ) {
+
+      response.textContent =
+        "BRAHMA: Voice input is not supported in this browser.";
+
+      speak(
+        "Voice input is not supported in this browser."
+      );
+
+      return;
+    }
+
+    const SpeechRecognition =
+      window.SpeechRecognition ||
+      window.webkitSpeechRecognition;
+
+    const recognition =
+      new SpeechRecognition();
+
+    recognition.lang = "en-IN";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    response.textContent =
+      "BRAHMA: Listening...";
+
+    recognition.start();
+
+
+    recognition.onresult =
+      function(event) {
+
+        const spokenText =
+          event.results[0][0].transcript;
+
+        document.getElementById(
+          "userInput"
+        ).value = spokenText;
+
+        talkToBrahma();
+      };
+
+
+    recognition.onerror =
+      function() {
+
+        response.textContent =
+          "BRAHMA: I couldn't hear you. Please try again.";
+      };
+  }
+
+</script>
+
 </body>
-  </html>
+</html>
