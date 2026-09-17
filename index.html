@@ -151,6 +151,23 @@
       reply = "You haven't told me your name yet.";
     }
   }
+    // Conversation Recall
+else if (
+  lowerMessage.includes("what did i ask") ||
+  lowerMessage.includes("what did i say earlier") ||
+  lowerMessage.includes("show my conversation")
+) {
+  if (conversationHistory.length === 0) {
+    reply = "I don't have any conversation history yet.";
+  } else {
+    const recent = conversationHistory
+      .slice(-5)
+      .map(item => "You said: " + item.user)
+      .join(" | ");
+
+    reply = "Recently, " + recent;
+  }
+  }
     // General Memory
 else if (lowerMessage.startsWith("remember that ")) {
   const memory = message.substring(14).trim();
