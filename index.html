@@ -245,6 +245,7 @@ else if (
   }
 
   response.textContent = "BRAHMA: " + reply;
+    saveConversation(message, reply);
   speak(reply);
 
   input.value = "";
