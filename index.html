@@ -333,6 +333,25 @@ if (voices.length === 0) {
     response.textContent = "BRAHMA: I couldn't hear you. Please try again.";
   };
   }
+  // Conversation History
+let conversationHistory =
+  JSON.parse(localStorage.getItem("conversationHistory")) || [];
+
+function saveConversation(userMessage, brahmaReply) {
+  conversationHistory.push({
+    user: userMessage,
+    brahma: brahmaReply
+  });
+
+  if (conversationHistory.length > 20) {
+    conversationHistory.shift();
+  }
+
+  localStorage.setItem(
+    "conversationHistory",
+    JSON.stringify(conversationHistory)
+  );
+      }
   // BRAHMA Local Memory
 let brahmaMemory = JSON.parse(localStorage.getItem("brahmaMemory")) || {};
 
