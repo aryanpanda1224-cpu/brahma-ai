@@ -151,6 +151,30 @@
       reply = "You haven't told me your name yet.";
     }
   }
+    // General Memory
+else if (lowerMessage.startsWith("remember that ")) {
+  const memory = message.substring(14).trim();
+
+  const memories = getMemory("facts") || [];
+  memories.push(memory);
+
+  saveMemory("facts", memories);
+
+  reply = "Got it. I will remember that.";
+}
+
+else if (
+  lowerMessage.includes("what do you remember") ||
+  lowerMessage.includes("what have you remembered")
+) {
+  const memories = getMemory("facts") || [];
+
+  if (memories.length === 0) {
+    reply = "I don't have any memories yet.";
+  } else {
+    reply = "I remember: " + memories.join(", ") + ".";
+  }
+      }
 // Clock
 else if (
   lowerMessage.includes("what time is it") ||
