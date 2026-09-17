@@ -115,36 +115,67 @@
 
 <script>
   function talkToBrahma() {
-    const input = document.getElementById("userInput");
-    const response = document.getElementById("response");
+  const input = document.getElementById("userInput");
+  const response = document.getElementById("response");
 
-    const message = input.value.trim();
+  const message = input.value.trim();
 
-    if (message === "") {
-      response.textContent = "BRAHMA: Please type something.";
-      speak("Please type something.");
-      return;
-    }
-
-    let reply;
-
-if (message.toLowerCase().includes("hello") || message.toLowerCase().includes("hi")) {
-  reply = "Hello! I am BRAHMA. How can I help you?";
-} 
-else if (message.toLowerCase().includes("how are you")) {
-  reply = "I am doing great and I am ready to help you.";
-} 
-else if (message.toLowerCase().includes("who are you")) {
-  reply = "I am BRAHMA, your personal AI assistant.";
-} 
-else {
-  reply = "I understand your message. I am still learning.";
+  if (message === "") {
+    response.textContent = "BRAHMA: Please type something.";
+    speak("Please type something.");
+    return;
   }
-    response.textContent = "BRAHMA: " + reply;
 
-    speak(reply);
+  const lowerMessage = message.toLowerCase();
+  let reply;
 
-    input.value = "";
+  // Remember name
+  if (lowerMessage.includes("my name is ")) {
+    const name = message.substring(lowerMessage.indexOf("my name is ") + 11).trim();
+
+    saveMemory("name", name);
+
+    reply = "Got it. I will remember your name is " + name + ".";
+  }
+
+  // Recall name
+  else if (
+    lowerMessage.includes("what is my name") ||
+    lowerMessage.includes("do you know my name")
+  ) {
+    const name = getMemory("name");
+
+    if (name) {
+      reply = "Your name is " + name + ".";
+    } else {
+      reply = "You haven't told me your name yet.";
+    }
+  }
+
+  // Existing responses
+  else if (
+    lowerMessage.includes("hello") ||
+    lowerMessage.includes("hi")
+  ) {
+    reply = "Hello! I am BRAHMA. How can I help you?";
+  }
+
+  else if (lowerMessage.includes("how are you")) {
+    reply = "I am doing great and I am ready to help you.";
+  }
+
+  else if (lowerMessage.includes("who are you")) {
+    reply = "I am BRAHMA, your personal AI assistant.";
+  }
+
+  else {
+    reply = "I understand your message. I am still learning.";
+  }
+
+  response.textContent = "BRAHMA: " + reply;
+  speak(reply);
+
+  input.value = "";
   }
 function speak(text) {
   if ("speechSynthesis" in window) {
