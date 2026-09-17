@@ -170,9 +170,28 @@ else if (
   const now = new Date();
   reply = "Today's date is " + now.toLocaleDateString();
   }
-  // Calculator
-else if (lowerMessage.startsWith("calculate ")) {
-  const expression = message.substring(10).trim();
+// Calculator
+else if (
+  lowerMessage.startsWith("calculate ") ||
+  lowerMessage.startsWith("what is ") ||
+  lowerMessage.startsWith("multiply ") ||
+  lowerMessage.startsWith("divide ") ||
+  lowerMessage.startsWith("add ") ||
+  lowerMessage.startsWith("subtract ")
+) {
+  let expression = message
+    .replace(/^calculate /i, "")
+    .replace(/^what is /i, "")
+    .replace(/^multiply /i, "")
+    .replace(/^divide /i, "")
+    .replace(/^add /i, "")
+    .replace(/^subtract /i, "")
+    .replace(/ times /gi, " * ")
+    .replace(/ multiplied by /gi, " * ")
+    .replace(/ divided by /gi, " / ")
+    .replace(/ plus /gi, " + ")
+    .replace(/ minus /gi, " - ")
+    .trim();
 
   try {
     const answer = Function('"use strict"; return (' + expression + ')')();
@@ -180,7 +199,7 @@ else if (lowerMessage.startsWith("calculate ")) {
   } catch {
     reply = "Sorry, I couldn't calculate that.";
   }
-  }
+    }
   // Existing responses
   else if (
     lowerMessage.includes("hello") ||
