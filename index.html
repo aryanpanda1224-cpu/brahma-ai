@@ -128,23 +128,7 @@
 
   const lowerMessage = message.toLowerCase();
   let reply;
-else if (
-  lowerMessage.includes("what time is it") ||
-  lowerMessage.includes("current time") ||
-  lowerMessage.includes("time")
-) {
-  const now = new Date();
-  reply = "The current time is " + now.toLocaleTimeString();
-}
 
-else if (
-  lowerMessage.includes("what is today's date") ||
-  lowerMessage.includes("what is the date") ||
-  lowerMessage.includes("today's date")
-) {
-  const now = new Date();
-  reply = "Today's date is " + now.toLocaleDateString();
-  }
   // Remember name
   if (lowerMessage.includes("my name is ")) {
     const name = message.substring(lowerMessage.indexOf("my name is ") + 11).trim();
@@ -167,7 +151,25 @@ else if (
       reply = "You haven't told me your name yet.";
     }
   }
+// Clock
+else if (
+  lowerMessage.includes("what time is it") ||
+  lowerMessage.includes("current time") ||
+  lowerMessage.includes("time")
+) {
+  const now = new Date();
+  reply = "The current time is " + now.toLocaleTimeString();
+}
 
+// Date
+else if (
+  lowerMessage.includes("what is today's date") ||
+  lowerMessage.includes("what is the date") ||
+  lowerMessage.includes("today's date")
+) {
+  const now = new Date();
+  reply = "Today's date is " + now.toLocaleDateString();
+  }
   // Existing responses
   else if (
     lowerMessage.includes("hello") ||
