@@ -125,8 +125,20 @@
       return;
     }
 
-    const reply = "Hello! I am BRAHMA. How can I help you?";
+    let reply;
 
+if (message.toLowerCase().includes("hello") || message.toLowerCase().includes("hi")) {
+  reply = "Hello! I am BRAHMA. How can I help you?";
+} 
+else if (message.toLowerCase().includes("how are you")) {
+  reply = "I am doing great and I am ready to help you.";
+} 
+else if (message.toLowerCase().includes("who are you")) {
+  reply = "I am BRAHMA, your personal AI assistant.";
+} 
+else {
+  reply = "I understand your message. I am still learning.";
+  }
     response.textContent = "BRAHMA: " + reply;
 
     speak(reply);
